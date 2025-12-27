@@ -15,5 +15,9 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	dh_auto_install
 
+# 跳过dh_install，因为CMake已经处理了所有安装
+override_dh_install:
+	# 所有文件已通过CMake安装，跳过dh_install
+
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
