@@ -14,12 +14,6 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	dh_auto_install
-	# 安装桌面文件
-	install -D -m 0644 debian/file-manager-preview.desktop \
-		debian/file-manager-preview/usr/share/applications/file-manager-preview.desktop
-	# 安装图标
-	install -D -m 0644 resources/icons/app-logo.svg \
-		debian/file-manager-preview/usr/share/icons/hicolor/scalable/apps/file-manager-preview.svg
 
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

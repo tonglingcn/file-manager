@@ -26,8 +26,8 @@ if (Qt6_FOUND)
         set(HAVE_QT_MULTIMEDIA ON)
     endif()
 
-    # Optional PDF support (off by default to avoid broken system packages)
-    option(ENABLE_QT_PDF "Enable Qt Pdf module for PDF preview" OFF)
+    # Optional PDF support (enabled by default for better user experience)
+    option(ENABLE_QT_PDF "Enable Qt Pdf module for PDF preview" ON)
     if (ENABLE_QT_PDF)
         # Prefer core QtPdf module to avoid PdfWidgets config issues
         find_package(Qt6 COMPONENTS Pdf QUIET)
@@ -113,13 +113,11 @@ install(TARGETS file_manager
     RUNTIME DESTINATION bin
 )
 
-# 安装桌面文件和图标（如果不是通过 debian/rules 安装）
-if(NOT DEFINED DEBIAN_PACKAGE)
-    install(FILES debian/file-manager-preview.desktop
-        DESTINATION share/applications
-    )
-    install(FILES resources/icons/app-logo.svg
-        DESTINATION share/icons/hicolor/scalable/apps
-        RENAME file-manager-preview.svg
-    )
-endif()
+# 安装桌面文件和图标
+install(FILES debian/file-manager-preview.desktop
+    DESTINATION share/applications
+)
+install(FILES resources/icons/app-logo.svg
+    DESTINATION share/icons/hicolor/scalable/apps
+    RENAME file-manager-preview.svg
+)
