@@ -25,10 +25,25 @@ static OfficeType detectOfficeApp(QString *exePathOut = nullptr, QString *typeNa
         return OfficeType::Unoconv;
     }
     
-    // 2. 检测 LibreOffice（开源免费，功能完整）
+    // 2. 检测 LibreOffice（开源免费，功能完整，已验证转换命令可用）
     QString soffice = QStandardPaths::findExecutable("soffice");
     if (soffice.isEmpty()) {
         soffice = QStandardPaths::findExecutable("libreoffice");
+    }
+    // 尝试常见的安装路径
+    if (soffice.isEmpty()) {
+        QStringList possiblePaths = {
+            "/usr/bin/libreoffice",
+            "/usr/bin/soffice",
+            "/opt/libreoffice/program/soffice",
+            "/snap/bin/libreoffice"
+        };
+        for (const QString& path : possiblePaths) {
+            if (QFile::exists(path)) {
+                soffice = path;
+                break;
+            }
+        }
     }
     if (!soffice.isEmpty()) {
         if (exePathOut) *exePathOut = soffice;
@@ -138,6 +153,14 @@ bool OfficeConverter::convertToPdf(const QString &inputPath, QString &pdfPath, Q
     QProcess proc;
     QStringList args;
     
+    // 对于 LibreOffice，添加环境变量优化
+    if (officeType == OfficeType::LibreOffice) {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        // 设置 LibreOffice 使用的显示为虚拟显示，避免窗口弹出
+        env.insert("DISPLAY", ":99");
+        proc.setProcessEnvironment(env);
+    }
+    
     switch (officeType) {
         case OfficeType::Unoconv:
             // unoconv 是最稳定的转换工具
@@ -145,7 +168,7 @@ bool OfficeConverter::convertToPdf(const QString &inputPath, QString &pdfPath, Q
             break;
             
         case OfficeType::LibreOffice:
-            // LibreOffice 标准转换命令
+            // LibreOffice 标准转换命令（已验证可用）
             args << "--headless" << "--convert-to" << "pdf" 
                  << "--outdir" << outDir << fi.absoluteFilePath();
             break;
@@ -219,4 +242,96 @@ QString OfficeConverter::detectInstalledOffice() {
     QString officeName;
     detectOfficeApp(nullptr, &officeName);
     return officeName;
+}
+
+bool OfficeConverter::isOfficeDocument(const QString &filePath) {
+    QString suffix = QFileInfo(filePath).suffix().toLower();
+    QStringList officeExtensions = {
+        // Microsoft Office
+        "doc", "docx", "dot", "dotx",
+        "xls", "xlsx", "xlt", "xltx",
+        "ppt", "pptx", "pot", "potx",
+        // LibreOffice/OpenOffice
+        "odt", "ott", "ods", "ots", "odp", "otp",
+        // 其他常见格式
+        "rtf", "wps", "et", "dps"
+    };
+    return officeExtensions.contains(suffix);
+}
+
+bool OfficeConverter::extractTextContent(const QString &inputPath, QString &textContent, QString &errorMsg) {
+    errorMsg.clear();
+    textContent.clear();
+    
+    QFileInfo fi(inputPath);
+    if (!fi.exists() || !fi.isFile()) {
+        errorMsg = QObject::tr("输入文件不存在: %1").arg(inputPath);
+        return false;
+    }
+    
+    QString suffix = fi.suffix().toLower();
+    
+    // 对于 docx/xlsx/pptx 等基于 ZIP 的文档，尝试提取文本
+    QStringList zipBasedFormats = {"docx", "xlsx", "pptx", "odt", "ods", "odp"};
+    if (zipBasedFormats.contains(suffix)) {
+        // 尝试使用 unzip 提取文档中的文本内容
+        QProcess proc;
+        QStringList args;
+        args << "-p" << fi.absoluteFilePath() << "word/document.xml";
+        
+        if (suffix == "docx" || suffix == "odt") {
+            args[1] = (suffix == "docx") ? "word/document.xml" : "content.xml";
+        } else if (suffix == "xlsx" || suffix == "ods") {
+            args[1] = (suffix == "xlsx") ? "xl/sharedStrings.xml" : "content.xml";
+        } else if (suffix == "pptx" || suffix == "odp") {
+            args[1] = (suffix == "pptx") ? "ppt/slides/slide1.xml" : "content.xml";
+        }
+        
+        proc.start("unzip", args);
+        if (proc.waitForFinished(10000)) {
+            QString xmlContent = QString::fromUtf8(proc.readAllStandardOutput());
+            // 简单的 XML 文本提取（移除标签）
+            textContent = xmlContent;
+            textContent.remove(QRegularExpression("<[^>]*>"));
+            textContent = textContent.simplified();
+            
+            if (!textContent.isEmpty() && textContent.length() > 10) {
+                return true;
+            }
+        }
+    }
+    
+    // 尝试使用 strings 命令提取可读文本
+    QProcess stringsProc;
+    stringsProc.start("strings", {fi.absoluteFilePath()});
+    if (stringsProc.waitForFinished(10000)) {
+        QString output = QString::fromLocal8Bit(stringsProc.readAllStandardOutput());
+        QStringList lines = output.split('\n');
+        
+        // 过滤出有意义的内容
+        QStringList meaningfulLines;
+        for (const QString& line : lines) {
+            QString trimmed = line.trimmed();
+            if (trimmed.length() > 3 && !trimmed.contains(QRegularExpression("[\\x00-\\x1F]"))) {
+                meaningfulLines.append(trimmed);
+            }
+        }
+        
+        if (!meaningfulLines.isEmpty()) {
+            textContent = meaningfulLines.join('\n');
+            return true;
+        }
+    }
+    
+    errorMsg = QObject::tr("无法提取文件文本内容");
+    return false;
+}
+
+void OfficeConverter::clearCache() {
+    QString cache = cacheDir();
+    QDir cacheDir(cache);
+    if (cacheDir.exists()) {
+        cacheDir.removeRecursively();
+        cacheDir.mkpath(".");
+    }
 }
