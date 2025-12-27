@@ -44,6 +44,8 @@
 #include <QFrame>
 #include <QPixmap>
 #include <QTimer>
+#include <QApplication>
+#include <QClipboard>
 #include "OfficeConverter.h"
 #include <QtConcurrent>
 #include <QFutureWatcher>
@@ -834,7 +836,9 @@ void MainWindow::setupToolbar() {
     // 完整路径文本框
     m_addressBar = new QLineEdit();
     m_addressBar->setPlaceholderText(tr("输入路径..."));
+    m_addressBar->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_addressBar, &QLineEdit::returnPressed, this, &MainWindow::onAddressBarTextChanged);
+    connect(m_addressBar, &QLineEdit::customContextMenuRequested, this, &MainWindow::showAddressBarContextMenu);
     m_addressStack->addWidget(m_addressBar);
     
     // 默认显示面包屑导航
@@ -1932,3 +1936,113 @@ void MainWindow::showAboutDialog() {
     aboutDialog->deleteLater();
 }
 
+void MainWindow::showAddressBarContextMenu(const QPoint &pos) {
+    QMenu contextMenu(tr("编辑"), this);
+    
+    // 检测当前主题（深色/浅色）
+    QPalette palette = this->palette();
+    bool isDarkTheme = palette.color(QPalette::Window).lightness() < 128;
+    
+    // 获取地址栏的标准动作
+    QAction *undoAction = m_addressBar->createStandardContextMenu()->actions().value(0);
+    QAction *redoAction = m_addressBar->createStandardContextMenu()->actions().value(1);
+    QAction *cutAction = m_addressBar->createStandardContextMenu()->actions().value(2);
+    QAction *copyAction = m_addressBar->createStandardContextMenu()->actions().value(3);
+    QAction *pasteAction = m_addressBar->createStandardContextMenu()->actions().value(4);
+    QAction *deleteAction = m_addressBar->createStandardContextMenu()->actions().value(5);
+    QAction *selectAllAction = m_addressBar->createStandardContextMenu()->actions().value(6);
+    
+    // 创建中文菜单项
+    QAction *chineseUndo = contextMenu.addAction(tr("撤销"));
+    chineseUndo->setEnabled(m_addressBar->isUndoAvailable());
+    connect(chineseUndo, &QAction::triggered, m_addressBar, &QLineEdit::undo);
+    
+    QAction *chineseRedo = contextMenu.addAction(tr("重做"));
+    chineseRedo->setEnabled(m_addressBar->isRedoAvailable());
+    connect(chineseRedo, &QAction::triggered, m_addressBar, &QLineEdit::redo);
+    
+    contextMenu.addSeparator();
+    
+    QAction *chineseCut = contextMenu.addAction(tr("剪切"));
+    chineseCut->setEnabled(m_addressBar->hasSelectedText());
+    connect(chineseCut, &QAction::triggered, m_addressBar, &QLineEdit::cut);
+    
+    QAction *chineseCopy = contextMenu.addAction(tr("复制"));
+    chineseCopy->setEnabled(m_addressBar->hasSelectedText());
+    connect(chineseCopy, &QAction::triggered, m_addressBar, &QLineEdit::copy);
+    
+    QAction *chinesePaste = contextMenu.addAction(tr("粘贴"));
+    chinesePaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
+    connect(chinesePaste, &QAction::triggered, m_addressBar, &QLineEdit::paste);
+    
+    contextMenu.addSeparator();
+    
+    QAction *chineseDelete = contextMenu.addAction(tr("删除"));
+    chineseDelete->setEnabled(m_addressBar->hasSelectedText());
+    connect(chineseDelete, &QAction::triggered, m_addressBar, &QLineEdit::del);
+    
+    contextMenu.addSeparator();
+    
+    QAction *chineseSelectAll = contextMenu.addAction(tr("全选"));
+    chineseSelectAll->setEnabled(!m_addressBar->text().isEmpty());
+    connect(chineseSelectAll, &QAction::triggered, m_addressBar, &QLineEdit::selectAll);
+    
+    // 根据主题设置菜单样式
+    QString menuStyleSheet;
+    if (isDarkTheme) {
+        // 深色主题样式
+        menuStyleSheet = 
+            "QMenu {"
+            "    background-color: #2b2b2b;"
+            "    border: 1px solid #555555;"
+            "    border-radius: 4px;"
+            "    color: #ffffff;"
+            "}"
+            "QMenu::item {"
+            "    padding: 8px 30px 8px 30px;"
+            "    border: 1px solid transparent;"
+            "    font-size: 14px;"
+            "    color: #ffffff;"
+            "}"
+            "QMenu::item:selected {"
+            "    background-color: #404040;"
+            "    border-color: #606060;"
+            "    color: #ffffff;"
+            "}"
+            "QMenu::separator {"
+            "    height: 1px;"
+            "    background-color: #555555;"
+            "    margin: 4px 0px;"
+            "}";
+    } else {
+        // 浅色主题样式
+        menuStyleSheet = 
+            "QMenu {"
+            "    background-color: white;"
+            "    border: 1px solid #CCCCCC;"
+            "    border-radius: 4px;"
+            "    color: #000000;"
+            "}"
+            "QMenu::item {"
+            "    padding: 8px 30px 8px 30px;"
+            "    border: 1px solid transparent;"
+            "    font-size: 14px;"
+            "    color: #000000;"
+            "}"
+            "QMenu::item:selected {"
+            "    background-color: #E3F2FD;"
+            "    border-color: #BBDEFB;"
+            "    color: #000000;"
+            "}"
+            "QMenu::separator {"
+            "    height: 1px;"
+            "    background-color: #E0E0E0;"
+            "    margin: 4px 0px;"
+            "}";
+    }
+    
+    contextMenu.setStyleSheet(menuStyleSheet);
+    
+    // 显示菜单
+    contextMenu.exec(m_addressBar->mapToGlobal(pos));
+}

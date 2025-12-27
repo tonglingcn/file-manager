@@ -112,6 +112,7 @@ private slots:
     void onAddressBarTextChanged();
     void toggleThumbnailMode();
     void showContextMenu(const QPoint &pos);
+    void showAddressBarContextMenu(const QPoint &pos);
     void setIconSize(int size);
     void toggleColumn(int column, bool visible);
     void setViewMode(const QString &mode);
