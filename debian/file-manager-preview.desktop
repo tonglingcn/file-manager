@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=文件管理器预览
+Name[en]=File Manager Preview
+GenericName=File Manager and Previewer
+GenericName[zh_CN]=文件管理与预览工具
+Comment=现代化的文件管理与预览工具
+Comment[en]=Modern file manager with preview support
+Comment[zh_CN]=支持多种文件格式的快速预览
+Exec=file_manager %F
+Icon=file-manager-preview
+Terminal=false
+Categories=Utility;FileTools;FileManager;
+MimeType=inode/directory;
+Keywords=file;manager;preview;viewer;
+StartupNotify=true

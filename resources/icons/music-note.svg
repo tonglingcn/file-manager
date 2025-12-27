@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="noteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 音符主体 -->
+  <g fill="url(#noteGradient)">
+    <!-- 第一个音符 -->
+    <ellipse cx="30" cy="75" rx="12" ry="9" transform="rotate(-20 30 75)"/>
+    <rect x="38" y="20" width="6" height="55" rx="3"/>
+    
+    <!-- 第二个音符 -->
+    <ellipse cx="60" cy="82" rx="12" ry="9" transform="rotate(-20 60 82)"/>
+    <rect x="68" y="30" width="6" height="52" rx="3"/>
+    
+    <!-- 连接线 -->
+    <path d="M 44 20 L 74 30 L 74 35 L 44 25 Z" fill="url(#noteGradient)"/>
+  </g>
+  
+  <!-- 高光效果 -->
+  <ellipse cx="35" cy="72" rx="4" ry="3" fill="rgba(255,255,255,0.6)" transform="rotate(-20 35 72)"/>
+  <ellipse cx="65" cy="79" rx="4" ry="3" fill="rgba(255,255,255,0.6)" transform="rotate(-20 65 79)"/>
+</svg>

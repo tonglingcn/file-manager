@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export QT_SELECT = qt6
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DENABLE_QT_PDF=ON \
+		-DCMAKE_INSTALL_PREFIX=/usr
+
+override_dh_auto_install:
+	dh_auto_install
+	# 安装桌面文件
+	install -D -m 0644 debian/file-manager-preview.desktop \
+		debian/file-manager-preview/usr/share/applications/file-manager-preview.desktop
+	# 安装图标
+	install -D -m 0644 resources/icons/app-logo.svg \
+		debian/file-manager-preview/usr/share/icons/hicolor/scalable/apps/file-manager-preview.svg
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

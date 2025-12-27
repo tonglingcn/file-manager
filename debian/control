@@ -1,0 +1,37 @@
+Source: file-manager-preview
+Section: utils
+Priority: optional
+Maintainer: 克亮 <315707022@qq.com>
+Build-Depends: debhelper-compat (= 13),
+               cmake (>= 3.16),
+               qt6-base-dev,
+               qt6-multimedia-dev,
+               libqt6pdf6-dev | qt6-base-dev,
+               libgl1-mesa-dev
+Standards-Version: 4.6.0
+Homepage: https://github.com/tonglingcn/file-manager-preview
+
+Package: file-manager-preview
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqt6core6,
+         libqt6gui6,
+         libqt6widgets6,
+         libqt6multimedia6,
+         libqt6multimediawidgets6,
+         libqt6pdf6,
+         qt6-qpa-plugins
+Recommends: wps-office | libreoffice | onlyoffice-desktopeditors
+Suggests: libreoffice-writer, wps-office-wps
+Description: 现代化的文件管理与预览工具
+ 一款基于 Qt6 开发的文件管理器预览工具，支持多种文件格式的快速预览。
+ .
+ 主要功能：
+  * 智能文件浏览与导航
+  * 图片预览（支持缩放、平移）
+  * 文本文件预览
+  * 音频播放（MP3、WAV、FLAC 等）
+  * 视频播放（MP4、AVI、MKV 等）
+  * PDF 文档预览
+  * 办公文档预览（尚未完善）
+  * 自定义视图选项

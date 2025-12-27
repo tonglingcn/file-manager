@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="codeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498DB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980B9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 文件主体 -->
+  <path d="M 20 10 L 65 10 L 80 25 L 80 90 L 20 90 Z" 
+        fill="url(#codeGradient)" 
+        stroke="#2471A3" 
+        stroke-width="2"/>
+  
+  <!-- 折角 -->
+  <path d="M 65 10 L 65 25 L 80 25 Z" 
+        fill="#2980B9"/>
+  
+  <!-- 代码符号 <> -->
+  <g fill="white" stroke="white" stroke-width="2" stroke-linecap="round">
+    <path d="M 35 45 L 28 55 L 35 65"/>
+    <path d="M 65 45 L 72 55 L 65 65"/>
+    <line x1="55" y1="42" x2="45" y2="68"/>
+  </g>
+</svg>

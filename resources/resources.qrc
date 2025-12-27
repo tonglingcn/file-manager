@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/home.svg</file>
+        <file>icons/desktop.svg</file>
+        <file>icons/documents.svg</file>
+        <file>icons/download.svg</file>
+        <file>icons/pictures.svg</file>
+        <file>icons/music.svg</file>
+        <file>icons/video.svg</file>
+        <file>icons/computer.svg</file>
+        <file>icons/system-disk.svg</file>
+        <file>icons/harddisk.svg</file>
+        <file>icons/app-logo.svg</file>
+        <file>icons/app-logo-simple.svg</file>
+        <file>icons/music-note.svg</file>
+        <file>icons/error-icon.svg</file>
+        <file>icons/file-unknown.svg</file>
+        <file>icons/file-code.svg</file>
+        <file>icons/file-archive.svg</file>
+    </qresource>
+</RCC>

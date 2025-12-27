@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="fileGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#95A5A6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7F8C8D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 文件主体 -->
+  <path d="M 20 10 L 65 10 L 80 25 L 80 90 L 20 90 Z" 
+        fill="url(#fileGradient)" 
+        stroke="#5D6D7E" 
+        stroke-width="2"/>
+  
+  <!-- 折角 -->
+  <path d="M 65 10 L 65 25 L 80 25 Z" 
+        fill="#7F8C8D"/>
+  
+  <!-- 问号 -->
+  <text x="50" y="65" 
+        font-family="Arial, sans-serif" 
+        font-size="35" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle">?</text>
+</svg>

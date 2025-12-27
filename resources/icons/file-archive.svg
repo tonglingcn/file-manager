@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="archiveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E67E22;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D35400;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 文件主体 -->
+  <path d="M 20 10 L 65 10 L 80 25 L 80 90 L 20 90 Z" 
+        fill="url(#archiveGradient)" 
+        stroke="#BA4A00" 
+        stroke-width="2"/>
+  
+  <!-- 折角 -->
+  <path d="M 65 10 L 65 25 L 80 25 Z" 
+        fill="#D35400"/>
+  
+  <!-- 拉链图案 -->
+  <g fill="white">
+    <rect x="45" y="15" width="10" height="4"/>
+    <rect x="45" y="22" width="10" height="4"/>
+    <rect x="45" y="29" width="10" height="4"/>
+    <rect x="45" y="36" width="10" height="4"/>
+    <rect x="45" y="43" width="10" height="4"/>
+    <rect x="45" y="50" width="10" height="4"/>
+    <circle cx="50" cy="60" r="6"/>
+  </g>
+</svg>
